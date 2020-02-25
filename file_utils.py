@@ -3,6 +3,7 @@ import os
 import numpy as np
 import cv2
 import imgproc
+from transform import four_point_transform
 
 # borrowed from https://github.com/lengstrom/fast-style-transfer/blob/master/src/utils.py
 def get_files(img_dir):
@@ -30,7 +31,7 @@ def list_files(in_path):
     # gt_files.sort()
     return img_files, mask_files, gt_files
 
-def saveResult(img_file, img, boxes, dirname='./result/', verticals=None, texts=None):
+def saveResult(img_file, img, boxes, bool_savecroped, dirname='./result/', verticals=None, texts=None):
         """ save text detection result one by one
         Args:
             img_file (str): image file name
@@ -59,7 +60,8 @@ def saveResult(img_file, img, boxes, dirname='./result/', verticals=None, texts=
                 f.write(strResult)
 
                 poly = poly.reshape(-1, 2)
-                cv2.polylines(img, [poly.reshape((-1, 1, 2))], True, color=(0, 0, 255), thickness=2)
+                # cv2.polylines(img, [poly.reshape((-1, 1, 2))], True, color=(0, 0, 255), thickness=2)
+                cv2.polylines(img, [poly.reshape((-1, 1, 2))], True, color=(250, 250, 250), thickness=2)
                 ptColor = (0, 255, 255)
                 if verticals is not None:
                     if verticals[i]:
@@ -70,6 +72,11 @@ def saveResult(img_file, img, boxes, dirname='./result/', verticals=None, texts=
                     font_scale = 0.5
                     cv2.putText(img, "{}".format(texts[i]), (poly[0][0]+1, poly[0][1]+1), font, font_scale, (0, 0, 0), thickness=1)
                     cv2.putText(img, "{}".format(texts[i]), tuple(poly[0]), font, font_scale, (0, 255, 255), thickness=1)
+
+                if bool_savecroped:
+                    cropimg = four_point_transform(img, box)
+                    strCropResult = dirname+'crop_'+filename+'_'+'{:03d}'.format(i)+'.jpg'
+                    cv2.imwrite(strCropResult, cropimg)
 
         # Save result image
         cv2.imwrite(res_img_file, img)

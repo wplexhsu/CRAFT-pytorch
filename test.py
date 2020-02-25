@@ -53,7 +53,7 @@ parser.add_argument('--mag_ratio', default=1.5, type=float, help='image magnific
 parser.add_argument('--poly', default=False, action='store_true', help='enable polygon type')
 parser.add_argument('--show_time', default=False, action='store_true', help='show processing time')
 parser.add_argument('--test_folder', default='/data/', type=str, help='folder path to input images')
-
+parser.add_argument('--savecroped', action='store_true', help='Save the cropped image')
 args = parser.parse_args()
 
 
@@ -141,6 +141,6 @@ if __name__ == '__main__':
         mask_file = result_folder + "/res_" + filename + '_mask.jpg'
         cv2.imwrite(mask_file, score_text)
 
-        file_utils.saveResult(image_path, image[:,:,::-1], polys, dirname=result_folder)
+        file_utils.saveResult(image_path, image[:,:,::-1], polys, args.savecroped, dirname=result_folder)
 
     print("elapsed time : {}s".format(time.time() - t))
